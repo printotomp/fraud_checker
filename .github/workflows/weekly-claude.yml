@@ -1,0 +1,57 @@
+name: Weekly Improvement
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"  # every Monday, 09:00 UTC
+  workflow_dispatch: {}   # allows manual runs from the Actions tab
+
+jobs:
+  improve:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set commit identity
+        run: |
+          git config --global user.name "${{ github.repository_owner }}"
+          git config --global user.email "${{ github.repository_owner }}@users.noreply.github.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review this repository (a small-business order fraud checker).
+            Follow the house rules in CLAUDE.md.
+
+            Do exactly one of the following, whichever is more valuable:
+            1. If there are open issues, pick the most useful one and fix it.
+            2. Otherwise, scan the code for a genuine bug and fix it.
+            3. Otherwise, add one small, well-scoped fraud-detection rule or
+               API improvement that fits the existing style (e.g. a new rule
+               in rules.py with a matching test, or a small quality-of-life
+               API change).
+
+            Requirements:
+            - Keep the change small and focused — one thing, not several.
+            - Add or update tests for anything you change; run `pytest` and
+              confirm it passes before finishing.
+            - Never touch scoring thresholds in scorer.py without also
+              updating/adding tests that justify the new values.
+            - Do not push to main. Open a pull request with a clear
+              description of what changed and why.
+          claude_args: "--model sonnet"
+          allowed_tools: "Bash(pip install -r requirements.txt),Bash(pytest),Bash(python -m pytest)"
