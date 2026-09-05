@@ -1,4 +1,4 @@
-name: Weekly_Improvement
+name: Weekly Improvement
 
 on:
   schedule:
@@ -12,6 +12,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,5 +54,6 @@ jobs:
               updating/adding tests that justify the new values.
             - Do not push to main. Open a pull request with a clear
               description of what changed and why.
-          claude_args: "--model sonnet"
-          allowed_tools: "Bash(pip install -r requirements.txt),Bash(pytest),Bash(python -m pytest)"
+          claude_args: |
+            --model sonnet
+            --allowedTools "Bash(pip install -r requirements.txt),Bash(pytest),Bash(python -m pytest)"
