@@ -94,16 +94,6 @@ for rule in report.triggered_rules:
     print("-", rule.reason)
 ```
 
-## Automated maintenance
-
-This repo runs a weekly GitHub Action (`.github/workflows/weekly-claude.yml`)
-that uses Claude Code to pick up an open issue, fix a bug, or add a small
-new rule — and opens a pull request for review. It never pushes directly
-to `main`. House rules for what it's allowed to touch live in `CLAUDE.md`.
-
-To enable it in your own fork: add an `ANTHROPIC_API_KEY` secret under
-repo Settings → Secrets and variables → Actions.
-
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Forks and PRs welcome — this is
